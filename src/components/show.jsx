@@ -6,11 +6,18 @@ import { db } from '../firebaseConfig/firebase';
 
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
+import emailjs from '@emailjs/browser';
+
+import moment from 'moment'
+import 'moment-timezone'
+
 const myAlert = withReactContent(Swal);
+document.head.title = 'Lista de registrados';
 
 
 
 const Show = () => {
+    document.title = 'Lista de registrados';
 
     // configuramos los hooks
     const [hostings, setHostings] = useState([]);
@@ -71,6 +78,40 @@ const Show = () => {
         )
     }
     console.log(hostings.length)
+    hostings.forEach(host => {
+        /* console.log(host.fecha) */
+        /* console.log((host.fecha).split("-")) */
+        console.log("---------------------------------")
+        console.log("fecha de inicio del host de "+ host.name, moment(host.fecha).format("DD/MM/YYYY"))
+        console.log("fecha de fin del host de "+ host.name, moment(host.fecha).add(1, "year").format("DD/MM/YYYY"))
+        console.log("fecha actual", moment().format("DD/MM/YYYY"))
+        console.log("Fecha de la enviada del mail: "+ host.name, moment(host.fecha).subtract(10, 'days').format("DD/MM/YYYY"))
+        const enviarMail = async (name, dominio) => {
+            let mensajeEmail = {
+                email: "correo-del-cliente@gmail.com",
+                name_cliente: name,
+                mensj: `El cliente del hosting ${dominio}, le faltan 10 dias para su que termine su host de 1 año`
+            }
+            await emailjs.send('service_ab0niq6', 'template_5hyo8ve', mensajeEmail, '_3QPcXEoejDIjoo25')
+                .then(function (response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    Swal.fire(
+                        "Correo enviado",
+                        `El correo del dominio: ${dominio} fue enviado exisamente`,
+                        "success"
+                    )
+                }, function (error) {
+                    console.log('FAILED...', error);
+                });
+        }
+        
+        if(/* moment(host.fecha).subtract(10, 'days').format("DD/MM/YYYY") */moment().add(1, "days").format("DD/MM/YYYY") === moment().format("DD/MM/YYYY")) {
+            console.log("enviando mail: "+ host.name);
+            enviarMail(host.name, host.dominio);
+        }
+        
+    })
+    
   return (
     <>
         <div className="container">
@@ -95,7 +136,7 @@ const Show = () => {
                                     <tr key={hosting.id}>
                                         <td>{hosting.name}</td>
                                         <td>{hosting.dominio}</td>
-                                        <td>{hosting.fecha}</td>
+                                        <td>{moment(hosting.fecha).format("DD/MM/YYYY")}</td>
                                         <td>
                                             <Link to={`/editar/${hosting.id}`} className="btn btn-light mx-1"><i className="fa-solid fa-pen-to-square"></i></Link>
                                             <button onClick={()=> confirmDelete(hosting.id, hosting.dominio)} className="btn btn-danger mx-1"><i className="fa-solid fa-trash-can"></i></button>

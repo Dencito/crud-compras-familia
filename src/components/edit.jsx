@@ -9,18 +9,19 @@ const Edit = () => {
     const [name, setName] = useState('')
     const [dominio, setDominio] = useState('')
     const [fecha, setFecha] = useState('')
-
+    
     const navigate = useNavigate()
     const {id} = useParams()
-
+    
     const update = async (e) => {
         e.preventDefault()
         const hosting = doc(db, "hosting", id)
         const data = {name: name, dominio: dominio, fecha: fecha}
         await updateDoc(hosting, data)
         navigate('/')
-
+        
     }
+    
 
     const getHostingById = async (id) => {
         const hosting = await getDoc(doc(db, "hosting", id))
@@ -43,14 +44,14 @@ const Edit = () => {
         getHostingById(id)
         // eslint-disable-next-line
     },[])
-
+    document.title = 'Editar cliente ' + name;
   return (
     <div className="container">
         <div className="row">
             
             <div className="col">
             
-                <h1 className='text-center'> <Link to="/" className='me-5'><i class="fa-solid fa-arrow-left"></i></Link>Editar cliente de {dominio}</h1>
+                <h1 className='text-center'> <Link to="/" className='me-5'><i className="fa-solid fa-arrow-left"></i></Link>Editar cliente del dominio: {dominio}</h1>
                 <form onSubmit={update}>
                     <div className="mb-3">
                         <label className="form-label">nombre</label>
