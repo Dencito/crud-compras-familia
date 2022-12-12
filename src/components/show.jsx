@@ -85,7 +85,7 @@ const Show = () => {
         console.log("fecha de inicio del host de "+ host.name, moment(host.fecha).format("DD/MM/YYYY"))
         console.log("fecha de fin del host de "+ host.name, moment(host.fecha).add(1, "year").format("DD/MM/YYYY"))
         console.log("fecha actual", moment().format("DD/MM/YYYY"))
-        console.log("Fecha de la enviada del mail: "+ host.name, moment(host.fecha).subtract(10, 'days').format("DD/MM/YYYY"))
+        console.log("Fecha de la enviada del mail: "+ host.name + " - ", moment(host.fecha).subtract(10, 'days').format("DD/MM/YYYY"))
         const enviarMail = async (name, dominio) => {
             let mensajeEmail = {
                 email: "correo-del-cliente@gmail.com",
@@ -104,8 +104,10 @@ const Show = () => {
                     console.log('FAILED...', error);
                 });
         }
+        let fechaDeMensaje = "13/12/2022";
+        console.log('Fecha test de envio offline:', fechaDeMensaje)
         
-        if(/* moment(host.fecha).subtract(10, 'days').format("DD/MM/YYYY") */moment().add(1, "days").format("DD/MM/YYYY") === moment().format("DD/MM/YYYY")) {
+        if(/* moment(host.fecha).subtract(10, 'days').format("DD/MM/YYYY") */fechaDeMensaje === moment().format("DD/MM/YYYY")) {
             console.log("enviando mail: "+ host.name);
             enviarMail(host.name, host.dominio);
         }
