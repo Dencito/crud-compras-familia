@@ -6,8 +6,8 @@ import Swal from "sweetalert2"
 
 
 const Edit = () => {
-    const [name, setName] = useState('')
-    const [dominio, setDominio] = useState('')
+    const [lugar, setLugar] = useState('')
+    const [gastado, setGastado] = useState('')
     const [fecha, setFecha] = useState('')
     
     const navigate = useNavigate()
@@ -15,21 +15,21 @@ const Edit = () => {
     
     const update = async (e) => {
         e.preventDefault()
-        const hosting = doc(db, "hosting", id)
-        const data = {name: name, dominio: dominio, fecha: fecha}
-        await updateDoc(hosting, data)
+        const compra = doc(db, "compras", id)
+        const data = {lugar, gastado, fecha}
+        await updateDoc(compra, data)
         navigate('/')
         
     }
     
 
-    const getHostingById = async (id) => {
-        const hosting = await getDoc(doc(db, "hosting", id))
-        if(hosting.exists()){
-            console.log(hosting.data())
-            setName(hosting.data().name)
-            setDominio(hosting.data().dominio)
-            setFecha(hosting.data().fecha)
+    const getCompraById = async (id) => {
+        const compra = await getDoc(doc(db, "compras", id))
+        if(compra.exists()){
+            console.log(compra.data())
+            setLugar(compra.data().lugar)
+            setGastado(compra.data().gastado)
+            setFecha(compra.data().fecha)
         }else {
             console.log("producto erroneo")
             Swal.fire(
@@ -41,40 +41,40 @@ const Edit = () => {
         }
     }
     useEffect(() => {
-        getHostingById(id)
+        getCompraById(id)
         // eslint-disable-next-line
     },[])
-    document.title = 'Editar cliente ' + name;
+    document.title = 'Editar compra ' + lugar;
   return (
     <div className="container">
         <div className="row">
             
             <div className="col">
             
-                <h1 className='text-center'> <Link to="/" className='me-5'><i className="fa-solid fa-arrow-left"></i></Link>Editar cliente del dominio: {dominio}</h1>
-                <form onSubmit={update}>
+                <h1 className='text-center'> <Link to="/" className='me-5'><i className="fa-solid fa-arrow-left"></i></Link>Editar compra: {lugar} - Gastado ${gastado}</h1>
+                <form onSubmit={update} className="col-11 col-sm-10 col-md-9 col-lg-8 col-xl-7 col-xxl-6 mx-auto my-4 form py-5">
                     <div className="mb-3">
-                        <label className="form-label">nombre</label>
+                        <label className="form-label">Lugar de compra</label>
                         <input
                             required
                             type="text"
-                            value={name}
-                            onChange={ (e) => setName(e.target.value)}
+                            value={lugar}
+                            onChange={ (e) => setLugar(e.target.value)}
                             className="form-control"/>
                     </div>
 
                     <div className="mb-3">
-                        <label className="form-label">Dominio</label>
+                        <label className="form-label">Dinero Gastado</label>
                         <input
                             required
                             type="text"
-                            value={dominio}
-                            onChange={ (e) => setDominio(e.target.value)}
+                            value={gastado}
+                            onChange={ (e) => setGastado(e.target.value)}
                             className="form-control"/>
                     </div>
 
                     <div className="mb-3">
-                        <label className="form-label">Fecha</label>
+                        <label className="form-label">Fecha de la compra</label>
                         <input
                             required
                             type="date"
@@ -82,7 +82,7 @@ const Edit = () => {
                             onChange={ (e) => setFecha(e.target.value)}
                             className="form-control"/>
                     </div>
-                    <button type='submit' className='btn btn-success'>Editar</button>
+                    <button type='submit' className="bg-btn">Editar <i className="fa-solid fa-pen-to-square"></i></button>
                 </form>
             </div>
         </div>

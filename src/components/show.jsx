@@ -1,160 +1,149 @@
-import React, {useState , useEffect} from 'react';
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore"
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 
-import { db } from '../firebaseConfig/firebase';
+import { db } from "../firebaseConfig/firebase";
 
-import Swal from "sweetalert2"
-import withReactContent from "sweetalert2-react-content"
-import emailjs from '@emailjs/browser';
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
-import moment from 'moment'
-import 'moment-timezone'
+import moment from "moment";
+import "moment-timezone";
 
 const myAlert = withReactContent(Swal);
-document.head.title = 'Lista de registrados';
-
-
 
 const Show = () => {
-    document.title = 'Lista de registrados';
+  document.title = "Listado de compras";
 
-    // configuramos los hooks
-    const [hostings, setHostings] = useState([]);
-    const [loading, setLoading] = useState(false)
+  // configuramos los hooks
+  const [compras, setCompras] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-    // refenciamos la database firestore
-    const hostingsCollection = collection(db, "hosting");
+  // refenciamos la database firestore
+  const comprasCollection = collection(db, "compras");
 
-    // funcion para mostrar todos los documentos
-    const getHostings = async() => {
-        const data = await getDocs(hostingsCollection)
-        /* console.log(data.docs) */
-        setHostings(
-            data.docs.map( (doc) => ({...doc.data(), id:doc.id}))
-            )
-            /* console.log(hostings) */
-            setLoading(true)
-    }
+  // funcion para mostrar todos los documentos
+  const getHostings = async () => {
+    const data = await getDocs(comprasCollection);
+    /* console.log(data.docs) */
+    setCompras(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    /* console.log(compras) */
+    setLoading(true);
+  };
 
-    // creamos funcion para eliminar documento
-    const deleteHosting = async (id) => {
-        const hostingDoc = doc(db, 'hosting', id);
-        await deleteDoc(hostingDoc)
-        getHostings()
-    }
+  // creamos funcion para eliminar documento
+  const deleteCompra = async (id) => {
+    const compraDoc = doc(db, "compras", id);
+    await deleteDoc(compraDoc);
+    getHostings();
+  };
 
-    // creamos confirmacion para eliminar con sweet alert
-    const confirmDelete = (id, dominio) => {
-        myAlert.fire({
-            title: "¿Estas seguro de eliminar el dominio? ",
-            text: dominio,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
-            cancelButtonText: "Cancelar",
-            confirmButtonText: "Si, Eliminar"
-        }).then((result) => {
-            if(result.isConfirmed) {
-                deleteHosting(id)
-                console.log("dominio eliminado: "+dominio)
-                Swal.fire(
-                    "Eliminado",
-                    `El dominio ${dominio} fue eliminado exisamente`,
-                    "success"
-                )
-            }
-        })
-    }
-    // usamos useEffect
-    useEffect(() => {
-        getHostings()
-        //eslint-disable-next-line
-    }, [])
-    if(loading===false) {
-        return(
-            <h2 className='mt-4'>Cargando Datos de los Clientes...</h2>
-        )
-    }
-    console.log(hostings.length)
-    hostings.forEach(host => {
-        /* console.log(host.fecha) */
-        /* console.log((host.fecha).split("-")) */
-        console.log("---------------------------------")
-        console.log("fecha de inicio del host de "+ host.name, moment(host.fecha).format("DD/MM/YYYY"))
-        console.log("fecha de fin del host de "+ host.name, moment(host.fecha).add(1, "year").format("DD/MM/YYYY"))
-        console.log("fecha actual", moment().format("DD/MM/YYYY"))
-        console.log("Fecha de la enviada del mail: "+ host.name + " - ", moment(host.fecha).subtract(10, 'days').format("DD/MM/YYYY"))
-        const enviarMail = async (name, dominio) => {
-            let mensajeEmail = {
-                email: "correo-del-cliente@gmail.com",
-                name_cliente: name,
-                mensj: `El cliente del hosting ${dominio}, le faltan 10 dias para su que termine su host de 1 año`
-            }
-            await emailjs.send('service_ab0niq6', 'template_5hyo8ve', mensajeEmail, '_3QPcXEoejDIjoo25')
-                .then(function (response) {
-                    console.log('SUCCESS!', response.status, response.text);
-                    Swal.fire(
-                        "Correo enviado",
-                        `El correo del dominio: ${dominio} fue enviado exisamente`,
-                        "success"
-                    )
-                }, function (error) {
-                    console.log('FAILED...', error);
-                });
+  // creamos confirmacion para eliminar con sweet alert
+  const confirmDelete = (id, lugar, fecha) => {
+    myAlert
+      .fire({
+        title: "¿Estas seguro de eliminar la compra? ",
+        text: lugar,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Si, Eliminar",
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          deleteCompra(id);
+          Swal.fire(
+            "Eliminado",
+            `La compra de ${lugar} de la fecha ${fecha} fue eliminada exisamente`,
+            "success"
+          );
         }
-        let fechaDeMensaje = "13/12/2022";
-        console.log('Fecha test de envio offline:', fechaDeMensaje)
-        
-        if(/* moment(host.fecha).subtract(10, 'days').format("DD/MM/YYYY") */fechaDeMensaje === moment().format("DD/MM/YYYY")) {
-            console.log("enviando mail: "+ host.name);
-            enviarMail(host.name, host.dominio);
-        }
-        
-    })
-    
+      });
+  };
+  // usamos useEffect
+  useEffect(() => {
+    getHostings();
+    //eslint-disable-next-line
+  }, []);
+  if (loading === false) {
+    return <h2 className="mt-4">Cargando Datos de las compras...</h2>;
+  }
+
+  const totalP = () => {
+    console.log(typeof compras.reduce((prev, act) => prev + act.gastado, 0));
+    return compras.reduce((prev, act) => prev + parseInt(act.gastado), 0);
+  };
+
   return (
     <>
-        <div className="container">
-            <div className="row">
-                <div className="col">
-                    <div className="d-grid gap-2">
-                        <Link to="/crear-hosting" className='btn btn-success my-2'>Crear nuevo cliente</Link>
-                    </div>
-                    <table className='table table-dark table-hover'>
-                        <thead>
-                            <tr>
-                                <th>Dueño</th>
-                                <th>Dominio</th>
-                                <th>Fecha de compra</th>
-                                <th>Opciones</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {
-                                hostings.map( (hosting)=>(
-                                    <tr key={hosting.id}>
-                                        <td>{hosting.name}</td>
-                                        <td>{hosting.dominio}</td>
-                                        <td>{moment(hosting.fecha).format("DD/MM/YYYY")}</td>
-                                        <td>
-                                            <Link to={`/editar/${hosting.id}`} className="btn btn-light mx-1"><i className="fa-solid fa-pen-to-square"></i></Link>
-                                            <button onClick={()=> confirmDelete(hosting.id, hosting.dominio)} className="btn btn-danger mx-1"><i className="fa-solid fa-trash-can"></i></button>
-                                        </td>
-                                    </tr>
-                                )  )
-                            }
-                        </tbody>
-                    </table>
-                            {hostings.length===0 ? <h3 className='color-dark'>Tabla de clientes vacia, crea algun cliente para ver resultados...</h3> : ""}
-                </div>
+      <div className="container">
+        <div className="row">
+          <div className="col">
+            <div className="flex justifiy-content-center my-3 align-items-center">
+              <Link to="/crear-compra" className="bg-btn">
+                Crear compra <i className="fa-solid fa-plus"></i>
+              </Link>
             </div>
+
+            <table className="table bg-table">
+              <thead>
+                <tr className="fs-5">
+                  <th>Lugar</th>
+                  <th>Dinero gastado</th>
+                  <th>Fecha de compra</th>
+                  <th>Opciones</th>
+                </tr>
+              </thead>
+              <tbody className="fs-6">
+                {compras.map((compra) => (
+                  <tr key={compra.id}>
+                    <td>{compra.lugar}</td>
+                    <td>{compra.gastado}</td>
+                    <td>{moment(compra.fecha).format("DD/MM/YYYY")}</td>
+                    <td>
+                      <Link
+                        to={`/editar/${compra.id}`}
+                        className="btn btn-light mx-1"
+                      >
+                        <i className="fa-solid fa-pen-to-square"></i>
+                      </Link>
+                      <button
+                        onClick={() =>
+                          confirmDelete(compra.id, compra.lugar, compra.fecha)
+                        }
+                        className="btn btn-danger mx-1"
+                      >
+                        <i className="fa-solid fa-trash-can"></i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+              
+            </table>
+            <div className="totalGastado mb-4">
+                {compras.length === 0 ? (
+                  " "
+                ) : (
+                  <span className="fs-4 fw-bold">Total gastado: ${totalP()}</span>
+                )}
+              </div>
+
+            {compras.length === 0 ? (
+              <h3 className="color-dark">
+                Tabla de compras vacia, genera alguna compra para ver los
+                resultados...
+              </h3>
+            ) : (
+              ""
+            )}
+          </div>
         </div>
+      </div>
     </>
+  );
+};
 
-  )
-}
-
-export default Show
+export default Show;

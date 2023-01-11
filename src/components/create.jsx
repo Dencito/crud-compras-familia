@@ -8,21 +8,22 @@ import { db } from '../firebaseConfig/firebase';
 
 
 const Create = () => {
-    document.title = 'Crear cliente';
-    const [name, setName] = useState('')
-    const [dominio, setDominio] = useState('')
-    let [fecha, setFecha] = useState('')
+    document.title = 'Crear compra';
+    const [lugar, setLugar] = useState('')
+    const [gastado, setGastado] = useState('')
+    const [fecha, setFecha] = useState('')
+    
     const navigate = useNavigate()
 
-    const hostingsCollection = collection(db, "hosting");
+    const comprasCollection = collection(db, "compras");
 
-    const hostingsAll = async (e) => {
+    const comprasAll = async (e) => {
         e.preventDefault()
         /* let dia = fecha.split("-")[2]
         let mes= fecha.split("-")[1]
         let anio = fecha.split("-")[0];
         fecha = `${dia}-${mes}-${anio}`; */
-        await addDoc(hostingsCollection, { name: name, dominio: dominio, fecha: fecha })
+        await addDoc(comprasCollection, {lugar, gastado, fecha})
         
         console.log(fecha)
         /* let mensajeEmail = {
@@ -52,38 +53,38 @@ const Create = () => {
 
                 <div className="col">
 
-                    <h1 className='text-center'> <Link to="/" className='me-5'><i className="fa-solid fa-arrow-left"></i></Link>Crear nuevo cliente</h1>
-                    <form onSubmit={hostingsAll}>
-                        <div className="mb-3">
-                            <label className="form-label">nombre</label>
-                            <input
-                                required
-                                type="text"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="form-control" />
-                        </div>
+                    <h2 className='text-center'> <Link to="/" className='me-5'><i className="fa-solid fa-arrow-left"></i></Link>Formulario de compra</h2>
+                    <form onSubmit={comprasAll} className="col-11 col-sm-10 col-md-9 col-lg-8 col-xl-7 col-xxl-6 mx-auto my-4 py-5 form">
+                    <div className="mb-3">
+                        <label className="form-label">Lugar de compra</label>
+                        <input
+                            required
+                            type="text"
+                            value={lugar}
+                            onChange={ (e) => setLugar(e.target.value)}
+                            className="form-control"/>
+                    </div>
 
-                        <div className="mb-3">
-                            <label className="form-label">Dominio</label>
-                            <input
-                                required
-                                type="text"
-                                value={dominio}
-                                onChange={(e) => setDominio(e.target.value)}
-                                className="form-control" />
-                        </div>
+                    <div className="mb-3">
+                        <label className="form-label">Dinero Gastado</label>
+                        <input
+                            required
+                            type="number"
+                            value={gastado}
+                            onChange={ (e) => setGastado(e.target.value)}
+                            className="form-control"/>
+                    </div>
 
-                        <div className="mb-3">
-                            <label className="form-label">Fecha</label>
-                            <input
-                                required
-                                type="date"
-                                value={fecha}
-                                onChange={(e) => setFecha(e.target.value)}
-                                className="form-control" />
-                        </div>
-                        <button type='submit' className='btn btn-success'>Crear</button>
+                    <div className="mb-3">
+                        <label className="form-label">Fecha de la compra</label>
+                        <input
+                            required
+                            type="date"
+                            value={fecha}
+                            onChange={ (e) => setFecha(e.target.value)}
+                            className="form-control"/>
+                    </div>
+                        <button type='submit' className="bg-btn">Crear <i className="fa-solid fa-plus"></i></button>
                     </form>
                 </div>
             </div>

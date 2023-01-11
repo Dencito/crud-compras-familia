@@ -8,12 +8,12 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "@firebase/firestore"
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC1QBZjDiTyHMBwIHh9KL3wuf8fee9Apig",
-  authDomain: "crud-papu.firebaseapp.com",
-  projectId: "crud-papu",
-  storageBucket: "crud-papu.appspot.com",
-  messagingSenderId: "632966235099",
-  appId: "1:632966235099:web:ac14e2b9fec955ecc05dfe"
+  apiKey: "AIzaSyCubHck_gPDPKgS3xEvuYWNY_8tAbuF1lI",
+  authDomain: "gastosdelmes-f9354.firebaseapp.com",
+  projectId: "gastosdelmes-f9354",
+  storageBucket: "gastosdelmes-f9354.appspot.com",
+  messagingSenderId: "375306895701",
+  appId: "1:375306895701:web:858c3c6652153d8f3a2fdc"
 };
 
 // Initialize Firebase
